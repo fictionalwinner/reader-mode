@@ -27,22 +27,53 @@ function getSelectionHTML() {
   }
 }
 
-function init() {
-  var article = new Readability(
-    getSelectionHTML() || document.cloneNode(true)
+function grabArticleSafari() {
+  var result = ReaderArticleFinderJS.adoptableArticle();
+
+  if (!result)
+    return null;
+
+  return {
+    title: ReaderArticleFinderJS.articleTitle(),
+    content: result.outerHTML
+  };
+}
+
+function grabArticleMozilla(selectionHTML) {
+  var result = new Readability(
+    selectionHTML || document.cloneNode(true)
   ).parse();
 
+  if (!result)
+    return null;
+
+  return {
+    title: result.title,
+    content: result.content
+  };
+}
+
+function grabArticle() {
+  var selectionHTML = getSelectionHTML();
+  if (selectionHTML)
+    return grabArticleMozilla(selectionHTML);
+
+  var article = grabArticleSafari();
+  if (!article)
+    article = grabArticleMozilla();
+  return article;
+}
+
+function init() {
+  var article = grabArticle();
   if (!article) {
-    alert('error')
+    alert('failed to grab article');
     return;
   }
 
   var key = Math.random();
   var items = {};
-  items[key] = {
-    title: article.title,
-    content: article.content
-  }
+  items[key] = article;
 
   chrome.storage.local.set(items, function() {
     chrome.runtime.sendMessage({
@@ -50,7 +81,6 @@ function init() {
       key: key
     });
   });
-
 }
 
 init();

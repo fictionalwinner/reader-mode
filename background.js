@@ -25,6 +25,7 @@ function execScripts(tabId, files) {
 function inject(info, tab) {
   execScripts(tab.id, [
     'inject/Readability.js',
+    'inject/safari_reader.js',
     'inject/main.js'
   ]);
 }
