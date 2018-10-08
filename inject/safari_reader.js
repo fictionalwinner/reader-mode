@@ -160,6 +160,7 @@ function elementIsCommentBlock(e) {
     return t && t.indexOf("comment") === 0?!0 : !1
 }
 function elementLooksLikeEmbeddedTweet(e) {
+  try {
     const t = /http.+twitter.com.*status.*[0-9]+/i;
     if (e.tagName !== "IFRAME")
         return !1;
@@ -167,6 +168,9 @@ function elementLooksLikeEmbeddedTweet(e) {
         return !1;
     var n = e.contentDocument.documentElement, r = 0, i = n.querySelector("blockquote");
     return i && t.test(i.getAttribute("cite"))&&++r, e.classList.contains("twitter-tweet")&&++r, n.querySelector("[data-iframe-title='Embedded Tweet']")&&++r, n.querySelector("[data-tweet-id]")&&++r, r > 2
+  } catch(ex) {
+    return !1;
+  }
 }
 function elementLooksLikePartOfACarousel(e) {
     const t = /carousel-|carousel_|-carousel|_carousel/, n = 3;
