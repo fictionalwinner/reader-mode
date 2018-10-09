@@ -27,11 +27,56 @@ function getSelectionHTML() {
   }
 }
 
+function fixRelativeUris(articleContent) {
+  var baseURI = document.baseURI;
+  var documentURI = document.documentURI;
+  function toAbsoluteURI(uri) {
+    // Leave hash links alone if the base URI matches the document URI:
+    if (baseURI == documentURI && uri.charAt(0) == "#") {
+      return uri;
+    }
+    // Otherwise, resolve against base URI:
+    try {
+      return new URL(uri, baseURI).href;
+    } catch (ex) {
+      // Something went wrong, just return the original:
+    }
+    return uri;
+  }
+
+  var links = articleContent.getElementsByTagName("a");
+  links = Array.from(links);
+  links.forEach(function(link) {
+    var href = link.getAttribute("href");
+    if (href) {
+      // Replace links with javascript: URIs with text content, since
+      // they won't work after scripts have been removed from the page.
+      if (href.indexOf("javascript:") === 0) {
+        var text = document.createTextNode(link.textContent);
+        link.parentNode.replaceChild(text, link);
+      } else {
+        link.setAttribute("href", toAbsoluteURI(href));
+      }
+    }
+  });
+
+  var imgs = articleContent.getElementsByTagName("img");
+  imgs = Array.from(imgs);
+  imgs.forEach(function(img) {
+    var src = img.getAttribute("src");
+    if (src) {
+      img.setAttribute("src", toAbsoluteURI(src));
+    }
+  });
+}
+
 function grabArticleSafari() {
   var result = ReaderArticleFinderJS.adoptableArticle();
 
   if (!result)
     return null;
+
+  fixRelativeUris(result);
 
   return {
     title: ReaderArticleFinderJS.articleTitle(),
