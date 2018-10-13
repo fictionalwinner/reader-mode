@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "reader mode",
-  "version": "0.0.3",
+  "name": "Reader Mode",
+  "version": "0.1.0",
   "description": "reader mode",
 
   "permissions": [

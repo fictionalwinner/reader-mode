@@ -32,14 +32,14 @@ function inject(info, tab) {
 
 function init() {
   chrome.contextMenus.create({
-    title: 'Reader Mode',
+    title: 'Convert to Markdown',
     contexts: ['page'],
     documentUrlPatterns: ['*://*/*'],
     onclick: inject
   });
 
   chrome.contextMenus.create({
-    title: 'Reader Mode',
+    title: 'Convert to Markdown',
     contexts: ['selection'],
     onclick: inject
   });

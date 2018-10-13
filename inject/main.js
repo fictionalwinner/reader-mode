@@ -116,7 +116,7 @@ function init() {
     return;
   }
 
-  var key = Math.random();
+  var key = Math.random().toString().substr(2);
   var items = {};
   items[key] = article;
 
